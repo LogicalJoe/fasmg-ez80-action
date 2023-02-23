@@ -79,7 +79,7 @@ jobs:
 
       - name: Build Program
         run: |
-          {{env.fasmg}} ${{env.TOOLCHAIN_PATH}}src/example.asm ${{env.TOOLCHAIN_PATH}}example.8xp
+          fasmg ${{env.TOOLCHAIN_PATH}}src/example.asm ${{env.TOOLCHAIN_PATH}}example.8xp
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
