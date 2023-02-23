@@ -1,4 +1,4 @@
-REPO_NAME := fasmg-action
+REPO_NAME := fasmg-ez80-action
 SRC := src/example.asm
 EXE_NAME := EXAMPLE
 RELEASE_DIR := $(REPO_NAME)
