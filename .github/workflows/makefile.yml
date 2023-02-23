@@ -10,8 +10,8 @@ on:
     
 env:
   FASMG_DOMAIN: https://flatassembler.net
-  CEDEV_BIN: ${{github.workspace}}/exec
-  TOOLCHAIN_PATH: ${{github.workspace}}/project
+  BIN_PATH: ${{github.workspace}}/exec
+  REPO_PATH: ${{github.workspace}}/project
   FASMG_PATH: ${{github.workspace}}/fasmg
 
 jobs:
@@ -22,20 +22,13 @@ jobs:
         runs-on: [ubuntu]
         include:
           - nul: /dev/null
-       #   - runs-on: macos
-       #     fasmg: /source/macos/x64/fasmg
-       #   - runs-on: windows
-       #     fasmg: /fasmg.exe
-       #     env: "env:"
-       #     exe: .exe
-       #     nul: nul
           - runs-on: ubuntu
             fasmg: /fasmg.x64
     runs-on: ${{matrix.runs-on}}-latest
 
     steps:
       - name: Prepare Build Environment
-        run: cmake -E echo >> $${{matrix.env}}GITHUB_PATH ${{env.CEDEV_BIN}}
+        run: cmake -E echo >> $${{matrix.env}}GITHUB_PATH ${{env.BIN_PATH}}
 
       - name: Download convbin
         uses: actions/checkout@v3
@@ -48,7 +41,7 @@ jobs:
         run: |
           make -C ${{github.workspace}}/convbin all V=1
       - name: Setup convbin
-        run: cmake -E copy ${{github.workspace}}/convbin/bin/convbin ${{env.CEDEV_BIN}}/convbin${{matrix.exe}}
+        run: cmake -E copy ${{github.workspace}}/convbin/bin/convbin ${{env.BIN_PATH}}/convbin${{matrix.exe}}
 
       - name: Download Fasmg Download Page
         id: fasmg-download
@@ -74,11 +67,11 @@ jobs:
           pathSource: ${{steps.fasmg.outputs.file-path}}
           pathTarget: ${{env.FASMG_PATH}}
       - name: Setup Fasmg
-        run: cmake -E copy fasmg${{matrix.fasmg}} ${{env.CEDEV_BIN}}/fasmg${{matrix.exe}}
+        run: cmake -E copy fasmg${{matrix.fasmg}} ${{env.BIN_PATH}}/fasmg${{matrix.exe}}
 
       - name: Make Binaries Executable
         if: runner.os != 'Windows'
-        run: chmod +x ${{env.CEDEV_BIN}}/*
+        run: chmod +x ${{env.BIN_PATH}}/*
       - name: Test Build Dependencies
         run: |
           fasmg ${{matrix.nul}} ${{matrix.nul}}
@@ -86,16 +79,16 @@ jobs:
       - name: Checkout Program
         uses: actions/checkout@v3
         with:
-          path: ${{env.TOOLCHAIN_PATH}}
+          path: ${{env.REPO_PATH}}
           submodules: recursive
           persist-credentials: false
 
       - name: Build Program
         run: |
-          make -C ${{env.TOOLCHAIN_PATH}} release V=1
+          make -C ${{env.REPO_PATH}} release V=1
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{github.event.repository.name}}
-          path: ${{env.TOOLCHAIN_PATH}}/${{github.event.repository.name}}.zip
+          path: ${{env.REPO_PATH}}/${{github.event.repository.name}}.zip
