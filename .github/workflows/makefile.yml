@@ -12,6 +12,7 @@ env:
   FASMG_DOMAIN: https://flatassembler.net
   CEDEV_BIN: ${{github.workspace}}/exec
   TOOLCHAIN_PATH: ${{github.workspace}}/${{github.repository_name}}
+  FASMG_PATH: ${{github.workspace}}/fasmg
 
 jobs:
   build:
@@ -26,6 +27,7 @@ jobs:
           - runs-on: windows
             fasmg: /fasmg.exe
             env: "env:"
+            exe: .exe
             nul: nul
           - runs-on: ubuntu
             fasmg: /fasmg.x64
