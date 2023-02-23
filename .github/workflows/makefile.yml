@@ -11,7 +11,7 @@ on:
 env:
   FASMG_DOMAIN: https://flatassembler.net
   CEDEV_BIN: ${{github.workspace}}/exec
-  TOOLCHAIN_PATH: ${{github.workspace}}/${{github.repository_name}}
+  TOOLCHAIN_PATH: ${{github.workspace}}/project
   FASMG_PATH: ${{github.workspace}}/fasmg
 
 jobs:
@@ -69,10 +69,6 @@ jobs:
       - name: Test Build Dependencies
         run: |
           fasmg ${{matrix.nul}} ${{matrix.nul}}
-          
-          
-      - name: Check Path
-        run: cmake -E echo $PATH
 
       - name: Checkout Program
         uses: actions/checkout@v3
