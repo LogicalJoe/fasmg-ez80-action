@@ -79,7 +79,7 @@ jobs:
 
       - name: Build Program
         run: |
-          make -C ${{env.TOOLCHAIN_PATH}} all V=1
+          make -C ${{env.TOOLCHAIN_PATH}} release V=1
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
