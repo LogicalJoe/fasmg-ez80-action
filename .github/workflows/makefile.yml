@@ -1,0 +1,78 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+    
+env:
+  FASMG_DOMAIN: https://flatassembler.net
+  CEDEV_BIN: ${{github.workspace}}/exec
+  TOOLCHAIN_PATH: ${{github.workspace}}/${{github.repository_name}}
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        runs-on: [ubuntu]
+        include:
+          - nul: /dev/null
+          - runs-on: macos
+            fasmg: /source/macos/x64/fasmg
+          - runs-on: windows
+            fasmg: /fasmg.exe
+            env: "env:"
+            nul: nul
+          - runs-on: ubuntu
+            fasmg: /fasmg.x64
+    runs-on: ${{matrix.runs-on}}-latest
+
+    steps:
+      - name: Prepare Build Environment
+        run: cmake -E echo >> $${{matrix.env}}GITHUB_PATH ${{env.CEDEV_BIN}}
+
+      - name: Download Fasmg Download Page
+        id: fasmg-download
+        uses: carlosperate/download-file-action@v1.0.3
+        with:
+          file-url: ${{env.FASMG_DOMAIN}}/download.php
+      - name: Parse Fasmg Download Page
+        id: fasmg-url
+        uses: QwerMike/xpath-action@v1
+        with:
+          filename: ${{steps.fasmg-download.outputs.file-path}}
+          expression: //a[starts-with(text(),"flat assembler g ")]/@href
+      - name: Extract Fasmg Url
+        run: cmake -E echo >> $${{matrix.env}}GITHUB_ENV ${{steps.fasmg-url.outputs.result}}
+      - name: Download Fasmg
+        id: fasmg
+        uses: carlosperate/download-file-action@v1.0.3
+        with:
+          file-url: ${{env.FASMG_DOMAIN}}/${{env.href}}
+      - name: Extract Fasmg
+        uses: DuckSoft/extract-7z-action@v1.0
+        with:
+          pathSource: ${{steps.fasmg.outputs.file-path}}
+          pathTarget: ${{env.FASMG_PATH}}
+      - name: Setup Fasmg
+        run: cmake -E copy fasmg${{matrix.fasmg}} ${{env.CEDEV_BIN}}/fasmg${{matrix.exe}}
+
+      - name: Make Binaries Executable
+        if: runner.os != 'Windows'
+        run: chmod +x ${{env.CEDEV_BIN}}/*
+      - name: Test Build Dependencies
+        run: |
+          fasmg ${{matrix.nul}} ${{matrix.nul}}
+
+      - name: Build Program
+        run: make -C ${{github.workspace}} all V=1
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: example.8xp
+          path: ${{github.repository_name}}/example.8xp
