@@ -84,5 +84,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{github.repository_name}}
-          path: ${{env.TOOLCHAIN_PATH}}/EXAMPLE.zip
+          name: ${{github.event.repository.name}}
+          path: ${{env.TOOLCHAIN_PATH}}/${{github.event.repository.name}}.zip

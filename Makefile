@@ -1,7 +1,8 @@
+REPO_NAME := fasmg-action
 SRC := src/example.asm
 EXE_NAME := example
-RELEASE_DIR := EXAMPLE
-RELEASE_ZIP := EXAMPLE
+RELEASE_DIR := $(REPO_NAME)
+RELEASE_ZIP := $(REPO_NAME)
 
 all:
 	fasmg $(SRC) $(EXE_NAME).8xp
