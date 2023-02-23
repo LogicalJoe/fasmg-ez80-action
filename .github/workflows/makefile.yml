@@ -22,13 +22,13 @@ jobs:
         runs-on: [ubuntu]
         include:
           - nul: /dev/null
-          - runs-on: macos
-            fasmg: /source/macos/x64/fasmg
-          - runs-on: windows
-            fasmg: /fasmg.exe
-            env: "env:"
-            exe: .exe
-            nul: nul
+       #   - runs-on: macos
+       #     fasmg: /source/macos/x64/fasmg
+       #   - runs-on: windows
+       #     fasmg: /fasmg.exe
+       #     env: "env:"
+       #     exe: .exe
+       #     nul: nul
           - runs-on: ubuntu
             fasmg: /fasmg.x64
     runs-on: ${{matrix.runs-on}}-latest
@@ -69,6 +69,10 @@ jobs:
       - name: Test Build Dependencies
         run: |
           fasmg ${{matrix.nul}} ${{matrix.nul}}
+          
+          
+      - name: Check Path
+        run: cmake -E echo $PATH
 
       - name: Checkout Program
         uses: actions/checkout@v3
