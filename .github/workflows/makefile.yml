@@ -37,6 +37,19 @@ jobs:
       - name: Prepare Build Environment
         run: cmake -E echo >> $${{matrix.env}}GITHUB_PATH ${{env.CEDEV_BIN}}
 
+      - name: Download convbin
+        uses: actions/checkout@v3
+        with:
+          repository: 'mateoconlechuga/convbin'
+          path: ${{github.workspace}}/convbin
+          submodules: recursive
+          persist-credentials: false
+      - name: Build convbin
+        run: |
+          make -C ${{github.workspace}}/convbin all V=1
+      - name: Setup convbin
+        run: cmake -E copy ${{github.workspace}}/convbin/bin/convbin ${{env.CEDEV_BIN}}/convbin${{matrix.exe}}
+
       - name: Download Fasmg Download Page
         id: fasmg-download
         uses: carlosperate/download-file-action@v1.0.3
