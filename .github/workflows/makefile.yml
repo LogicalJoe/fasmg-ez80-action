@@ -70,6 +70,13 @@ jobs:
         run: |
           fasmg ${{matrix.nul}} ${{matrix.nul}}
 
+      - name: Checkout Program
+        uses: actions/checkout@v3
+        with:
+          path: ${{env.TOOLCHAIN_PATH}}
+          submodules: recursive
+          persist-credentials: false
+
       - name: Build Program
         run: make -C ${{env.TOOLCHAIN_PATH}} all V=1
 
