@@ -78,7 +78,8 @@ jobs:
           persist-credentials: false
 
       - name: Build Program
-        run: fasmg ${{env.TOOLCHAIN_PATH}}/src/example.asm ${{env.TOOLCHAIN_PATH}}/src/example.8xp #make -C ${{env.TOOLCHAIN_PATH}} all V=1
+        run: |
+          fasmg ${{env.TOOLCHAIN_PATH}}src/example.asm ${{env.TOOLCHAIN_PATH}}src/example.8xp #make -C ${{env.TOOLCHAIN_PATH}} all V=1
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
